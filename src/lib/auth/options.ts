@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
 				path: '/',
 				domain:
 					process.env.NODE_ENV === 'production'
-						? '.t3-starter.vercel.app'
+						? '.t3-nextjs-starter.vercel.app'
 						: undefined,
 				secure: process.env.NODE_ENV === 'production',
 			},
