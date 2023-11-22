@@ -23,7 +23,8 @@ NEXTAUTH_URL = 'http://localhost:4242/'  # change this to your domain in product
 
 ## Google OAuth Setup
 
-![Screenshot 2023-11-22 at 8 50 37 AM](https://github.com/temrb/t3-nextjs-starter/assets/22056864/8126399b-0d2d-489f-81d2-2028d5aaa95d)
+![Screenshot 2023-11-22 at 8 50 37 AM](https://github.com/temrb/t3-starter/assets/22056864/1fe7f3aa-4ec2-47de-b40c-22d65d31e122)
+
 
 ## Cookie Edit
 
