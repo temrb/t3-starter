@@ -25,6 +25,18 @@ NEXTAUTH_URL = 'http://localhost:4242/'  # change this to your domain in product
 
 ![Screenshot 2023-11-22 at 8 50 37 AM](https://github.com/temrb/t3-nextjs-starter/assets/22056864/8126399b-0d2d-489f-81d2-2028d5aaa95d)
 
+## Cookie Edit
+
+Set sessionToken domain to your production domain with period in front:
+
+```tsx
+            domain:
+                    process.env.NODE_ENV === 'production'
+                        ? '.t3-nextjs-starter.vercel.app' //<--- change this to your domain in production
+                        : undefined,
+                secure: process.env.NODE_ENV === 'production',
+```
+
 ##
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
@@ -63,4 +75,5 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
 # t3-nextjs-starter
