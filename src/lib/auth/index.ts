@@ -1,5 +1,4 @@
 import { getServerSession } from 'next-auth/next';
-import { ratelimit } from '../../lib/upstash';
 import { authOptions } from '../../lib/auth/options';
 import { db } from '@/server/prisma';
 
