@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../../lib/auth/options';
-import { db } from '@/server/prisma';
+import { ISODateString } from 'next-auth';
 
 export interface Session {
 	user: {
@@ -11,6 +11,7 @@ export interface Session {
 		role: string;
 		credits: number;
 	};
+	expires: ISODateString;
 }
 
 export const getSession = async () => {
