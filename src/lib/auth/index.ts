@@ -7,10 +7,7 @@ export interface Session {
 		id: string;
 		email: string;
 		name: string;
-		alias: string;
 		image?: string;
-		credits: number;
-		role: string;
 	};
 	expires: ISODateString;
 }

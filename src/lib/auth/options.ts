@@ -8,8 +8,6 @@ declare module 'next-auth' {
 	interface Session extends DefaultSession {
 		user: {
 			id: string;
-			alias: string;
-			credits: number;
 		} & DefaultSession['user'];
 	}
 }
@@ -93,7 +91,6 @@ export const authOptions: NextAuthOptions = {
 						name: true,
 						email: true,
 						image: true,
-						credits: true,
 					},
 				});
 				if (userExists && !userExists.name) {
