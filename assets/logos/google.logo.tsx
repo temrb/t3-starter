@@ -1,15 +1,15 @@
 import React from 'react';
 
 interface Props {
-	width: number;
+	size: number;
 }
 
-const GoogleLogo = ({ width }: Props) => {
+const GoogleLogo = ({ size }: Props) => {
 	return (
 		<svg
 			xmlns='http://www.w3.org/2000/svg'
-			width={width}
-			height={width}
+			width={size}
+			height={size}
 			viewBox='0 0 375 375'
 			version='1.0'
 		>

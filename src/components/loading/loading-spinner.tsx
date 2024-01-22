@@ -3,16 +3,18 @@
 import React from 'react';
 
 interface Props {
-	size: string;
+	size: number;
 }
 
 const LoadingSpinner = ({ size }: Props) => {
 	return (
 		<svg
-			className={`${size} animate-spin text-foreground ease-in-out`}
+			className='animate-spin text-foreground ease-in-out'
 			xmlns='http://www.w3.org/2000/svg'
 			fill='none'
 			viewBox='0 0 24 24'
+			height={size}
+			width={size}
 		>
 			<circle
 				className='opacity-35'

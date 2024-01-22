@@ -9,7 +9,7 @@ const TRPCQuery = () => {
 	const trpcQuery = api.test.hello.useQuery();
 
 	if (trpcQuery.isLoading) {
-		return <LoadingSpinner size='size-6' />;
+		return <LoadingSpinner size={14} />;
 	}
 
 	if (trpcQuery.error) {

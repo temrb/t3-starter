@@ -49,7 +49,7 @@ const Page = () => {
 							}}
 						>
 							<span className='flex w-full flex-row items-center justify-center space-x-2'>
-								<GoogleLogo width={24} />
+								<GoogleLogo size={24} />
 								<p className='text-sm font-normal tracking-wide'>
 									Continue with Google
 								</p>
