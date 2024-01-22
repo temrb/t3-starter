@@ -11,7 +11,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import LinkedInLogo from '../../../assets/logos/linkedin.logo';
 import Logo from '@/components/logo';
 
 const Page = () => {
