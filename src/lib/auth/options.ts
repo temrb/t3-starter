@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
 				path: '/',
 				domain:
 					process.env.NODE_ENV === 'production'
-						? '.careerflo.co'
+						? `.${process.env.VERCEL_URL}`
 						: undefined,
 				secure: process.env.NODE_ENV === 'production',
 			},
