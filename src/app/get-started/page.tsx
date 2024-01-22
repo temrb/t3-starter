@@ -33,9 +33,7 @@ const Page = () => {
 								Get started
 							</span>
 						</CardTitle>
-						<CardDescription>
-							T3 Stack
-						</CardDescription>
+						<CardDescription>T3 Stack</CardDescription>
 						<div className='rounded-full bg-muted px-3 py-1 font-mono text-xs tracking-tighter ring-2 ring-destructive'>
 							Starter Kit 🚀
 						</div>
@@ -54,24 +52,6 @@ const Page = () => {
 								<GoogleLogo width={24} />
 								<p className='text-sm font-normal tracking-wide'>
 									Continue with Google
-								</p>
-							</span>
-						</Button>
-						<Button
-							disabled={loading}
-							className='h-14 w-full'
-							variant='outline'
-							onClick={() => {
-								setLoading(true);
-								signIn('linkedin').then(() =>
-									setLoading(false),
-								);
-							}}
-						>
-							<span className='flex w-full flex-row items-center justify-center space-x-2'>
-								<LinkedInLogo width={24} />
-								<p className='text-sm font-normal tracking-wide'>
-									Continue with LinkedIn
 								</p>
 							</span>
 						</Button>
