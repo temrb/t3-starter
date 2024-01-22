@@ -18,7 +18,6 @@ model User {
   emailVerified DateTime?
   image         String?
 
-  credits Int       @default(10)
   Account Account[]
   Session Session[]
   Token   Token[]
