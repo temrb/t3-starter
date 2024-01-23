@@ -1,28 +1,30 @@
 import { useEffect, useState } from 'react';
 
+type DeviceType = 'mobile' | 'tablet' | 'desktop' | null;
+
+interface Dimensions {
+	width: number;
+	height: number;
+}
+
 export default function useMediaQuery() {
-	const [device, setDevice] = useState<
-		'mobile' | 'tablet' | 'desktop' | null
-	>(null);
-	const [dimensions, setDimensions] = useState<{
-		width: number;
-		height: number;
-	} | null>(null);
+	const [device, setDevice] = useState<DeviceType>(null);
+	const [dimensions, setDimensions] = useState<Dimensions | null>(null);
 
 	useEffect(() => {
 		const checkDevice = () => {
-			if (window.matchMedia('(max-width: 640px)').matches) {
+			const screenWidth = window.innerWidth;
+
+			if (screenWidth <= 640) {
 				setDevice('mobile');
-			} else if (
-				window.matchMedia('(min-width: 641px) and (max-width: 1024px)')
-					.matches
-			) {
+			} else if (screenWidth > 640 && screenWidth <= 1024) {
 				setDevice('tablet');
 			} else {
 				setDevice('desktop');
 			}
+
 			setDimensions({
-				width: window.innerWidth,
+				width: screenWidth,
 				height: window.innerHeight,
 			});
 		};
@@ -30,12 +32,16 @@ export default function useMediaQuery() {
 		// Initial detection
 		checkDevice();
 
-		// Listener for windows resize
-		window.addEventListener('resize', checkDevice);
+		// Listener for window resize
+		const handleResize = () => {
+			checkDevice();
+		};
+
+		window.addEventListener('resize', handleResize);
 
 		// Cleanup listener
 		return () => {
-			window.removeEventListener('resize', checkDevice);
+			window.removeEventListener('resize', handleResize);
 		};
 	}, []);
 
