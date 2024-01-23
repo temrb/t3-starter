@@ -3,7 +3,7 @@ import React from 'react';
 import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
-import LoadingSpinner from '@/components/loading/loading-spinner';
+import LoadingSpinner from '@/components/ui/loading/loading-spinner';
 
 const TRPCQuery = () => {
 	const trpcQuery = api.test.hello.useQuery();

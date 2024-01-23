@@ -1,5 +1,5 @@
 import React from 'react';
-import PageLoading from '@/components/loading/page-loading';
+import PageLoading from '@/components/ui/loading/page-loading';
 
 const Loading = () => {
 	return <PageLoading />;
