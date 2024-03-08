@@ -1,15 +1,20 @@
 /** @format */
 
-import React from 'react';
+import { cn } from '@/lib/utils/tw.utils';
 
 interface Props {
 	size: number;
+	textNormal?: boolean | false;
 }
 
-const LoadingSpinner = ({ size }: Props) => {
+const LoadingSpinner = (props: Props) => {
+	const { size, textNormal } = props;
 	return (
 		<svg
-			className='animate-spin text-foreground ease-in-out'
+			className={cn(
+				'animate-spin ease-in-out',
+				!textNormal && 'text-foreground',
+			)}
 			xmlns='http://www.w3.org/2000/svg'
 			fill='none'
 			viewBox='0 0 24 24'

@@ -1,16 +1,22 @@
 import { db } from '@/server/prisma';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { DefaultSession, type NextAuthOptions } from 'next-auth';
+import { DefaultJWT } from 'next-auth/jwt';
 import GoogleProvider from 'next-auth/providers/google';
 import LinkedInProvider from 'next-auth/providers/linkedin';
 
 declare module 'next-auth' {
-	interface Session extends DefaultSession {
-		user: {
+	interface Session {
+		user?: {
 			id: string;
+			email: string;
+			name: string;
+			image?: string;
 		} & DefaultSession['user'];
 	}
 }
+
+const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -24,7 +30,6 @@ export const authOptions: NextAuthOptions = {
 					name: profile.name,
 					email: profile.email,
 					image: profile.picture,
-					emailVerified: profile.email_verified && Date.now(),
 				};
 			},
 		}),
@@ -43,7 +48,6 @@ export const authOptions: NextAuthOptions = {
 					name: profile.name,
 					email: profile.email,
 					image: profile.picture,
-					emailVerified: profile.email_verified && Date.now(),
 				};
 			},
 		}),
@@ -51,75 +55,116 @@ export const authOptions: NextAuthOptions = {
 	adapter: PrismaAdapter(db),
 	session: {
 		strategy: 'jwt',
-		// maxAge: 15 * 24 * 60 * 60, // 15 days
 	},
 	cookies: {
 		sessionToken: {
-			name: `${
-				process.env.NODE_ENV === 'production' ? '__Secure-' : ''
-			}next-auth.session-token`,
+			name: `${VERCEL_DEPLOYMENT ? '__Secure-' : ''}next-auth.session-token`,
 			options: {
 				httpOnly: true,
 				sameSite: 'lax',
 				path: '/',
-				domain:
-					process.env.NODE_ENV === 'production'
-						? '.t3starter.vercel.app'
-						: undefined,
-				secure: process.env.NODE_ENV === 'production',
+				domain: VERCEL_DEPLOYMENT
+					? `.${process.env.NEXT_PUBLIC_APP_DOMAIN}`
+					: undefined,
+				secure: VERCEL_DEPLOYMENT,
 			},
 		},
 	},
 	pages: {
-		signIn: '/get-started',
+		// signIn: '/get-started',
 		error: '/get-started',
 	},
 	callbacks: {
 		signIn: async ({ user, account, profile }) => {
 			if (process.env.NODE_ENV === 'development') {
-				console.log('THE STUFF 🚨🚨🚨🚨', { user, account, profile });
+				console.log(
+					'⬇️⬇️⬇️ AUTH DEBUG ⬇️⬇️⬇️',
+					{ user, account, profile },
+					'⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️',
+				);
 			}
 
 			if (!user.email) {
 				return false;
 			}
+
 			if (account?.provider === 'google') {
+				const userExists = await db.user.findUnique({
+					where: {
+						email: user.email,
+					},
+					select: {
+						id: true,
+						name: true,
+						image: true,
+					},
+				});
+				// if the user already exists via email,
+				// update the user with their name and image from Google
+				if (userExists && profile) {
+					await db.user.update({
+						where: { email: user.email },
+						data: {
+							...(userExists.name ? {} : { name: profile.name }),
+
+							...(userExists.image
+								? {}
+								: {
+										// @ts-expect-error
+										// - this is a bug in the types, `picture` is a valid on the `Profile` type
+										image: profile.picture,
+									}),
+						},
+					});
+				}
+			}
+			if (account?.provider === 'linkedin') {
 				const userExists = await db.user.findUnique({
 					where: { email: user.email },
 					select: {
 						id: true,
 						name: true,
-						email: true,
 						image: true,
 					},
 				});
-				if (userExists && !userExists.name) {
+				// if the user already exists via email,
+				// update the user with their name and image from Github
+				if (userExists && profile) {
 					await db.user.update({
 						where: { email: user.email },
 						data: {
-							name: profile?.name,
-							// @ts-ignore - TODO: fix this
-							image: profile?.picture,
-							email: profile?.email,
+							...(userExists.name
+								? {}
+								: // @ts-expect-error - this is a bug in the types, `login` is a valid on the `Profile` type
+									{ name: profile.name || profile.login }),
+							...(userExists.image
+								? {}
+								: {
+										// @ts-expect-error
+										// - this is a bug in the types, `picture` is a valid on the `Profile` type
+										image: profile.avatar_url,
+									}),
 						},
 					});
 				}
 			}
+
 			return true;
 		},
-
 		jwt: async ({ token, account, user, trigger }) => {
 			if (!token.email) {
 				return {};
 			}
 
 			if (user) {
-				token.user = user;
+				// token.user = user;
 				token.sub = user.id;
 				token.email = user.email;
 				token.name = user.name;
+				token.picture = user.image;
 			}
 
+			// refresh the user's data if they update their name / email
 			if (trigger === 'update') {
 				const refreshedUser = await db.user.findUnique({
 					where: { id: token.sub },
@@ -130,15 +175,18 @@ export const authOptions: NextAuthOptions = {
 					return {};
 				}
 			}
-
 			return token;
 		},
 		session: async ({ session, token }) => {
 			session.user = {
 				id: token.sub,
+				email: token.email,
+				name: token.name,
+				image: token.picture,
 				// @ts-ignore
 				...(token || session).user,
 			};
+
 			return session;
 		},
 	},

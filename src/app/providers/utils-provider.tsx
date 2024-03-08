@@ -1,6 +1,6 @@
 'use client';
 
-import CheckConnection from '@/components/check-connection';
+import CheckConnection from '@/components/ui/check-connection';
 import React, { ReactNode } from 'react';
 import { useInternetConnection } from '@/hooks/index';
 

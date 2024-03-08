@@ -11,7 +11,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import Logo from '@/components/logo';
+import Logo from '@/components/ui/logo';
 
 const Page = () => {
 	const [loading, setLoading] = useState(false);

@@ -4,9 +4,11 @@ import Providers from './providers';
 import { Analytics } from '@/scripts';
 import localFont from 'next/font/local';
 
-const myFont = localFont({
-	src: '../styles/Unageo[wght,ital].ttf',
+const hubot = localFont({
+	src: '../../public/assets/fonts/Hubot-Sans.woff2',
+	variable: '--font-hubot',
 	display: 'swap',
+	// weight: '',
 });
 
 export const metadata = {
@@ -36,7 +38,7 @@ export default async function RootLayout({
 				<Analytics />
 			</head>
 			<body
-				className={`${myFont.className} h-[calc(100dvh)] w-full bg-background text-foreground antialiased`}
+				className={`${hubot.className} h-[calc(100dvh)] w-full bg-background text-foreground antialiased`}
 			>
 				<Providers>{children}</Providers>
 			</body>

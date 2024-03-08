@@ -2,7 +2,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/navigation';
 import { Drawer } from 'vaul';
-import { cn } from '@/lib/tw.utils';
+import { cn } from '@/lib/utils/tw.utils';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useMediaQuery } from '@/hooks';
 

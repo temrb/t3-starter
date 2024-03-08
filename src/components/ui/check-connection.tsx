@@ -10,7 +10,9 @@ const CheckConnection = () => {
 				<WifiOff size={30} />
 			</div>
 			<div className='flex flex-col items-center justify-center pt-2'>
-				<h1 className='text-center text-3xl font-semibold'>You are offline.</h1>
+				<h1 className='text-center text-3xl font-semibold'>
+					You are offline.
+				</h1>
 				<p className='text-center text-sm tracking-wide'>
 					Please check your internet connection
 				</p>
