@@ -1,9 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { signIn } from 'next-auth/react';
-import React, { useState } from 'react';
-import GoogleLogo from '../../../assets/logos/google.logo';
 import {
 	Card,
 	CardContent,
@@ -12,6 +9,9 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import Logo from '@/components/ui/logo';
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import GoogleLogo from '../../../public/logos/google.logo';
 
 const Page = () => {
 	const [loading, setLoading] = useState(false);
