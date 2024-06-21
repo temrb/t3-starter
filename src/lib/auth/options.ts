@@ -92,9 +92,10 @@ export const authOptions: NextAuthOptions = {
 				linkedin: 'avatar_url', // Adjust if necessary for LinkedIn
 			};
 
-			const provider = account?.provider;
+			const provider =
+				account?.provider as keyof typeof providerProfileFields;
 			if (provider && ['google', 'linkedin'].includes(provider)) {
-				const userExists = await db.user.findUnique({
+				const userExists = await prisma.user.findUnique({
 					where: {
 						email: user.email,
 					},
@@ -106,11 +107,17 @@ export const authOptions: NextAuthOptions = {
 				});
 
 				if (userExists && profile) {
-					const profilePic = profile[providerProfileFields[provider]];
-					const dataToUpdate = {};
+					const profilePic =
+						profile[
+							providerProfileFields[
+								provider
+							] as keyof typeof profile
+						];
+					const dataToUpdate: Record<string, any> = {};
 
 					if (!userExists.name) {
-						dataToUpdate.name = profile.name || profile.login; // Using `login` as a fallback if `name` doesn't exist
+						dataToUpdate.name =
+							profile.name || (profile as any).login; // Using `login` as a fallback if `name` doesn't exist
 					}
 
 					if (!userExists.image) {
@@ -118,7 +125,7 @@ export const authOptions: NextAuthOptions = {
 					}
 
 					if (Object.keys(dataToUpdate).length > 0) {
-						await db.user.update({
+						await prisma.user.update({
 							where: { email: user.email },
 							data: dataToUpdate,
 						});
@@ -128,44 +135,7 @@ export const authOptions: NextAuthOptions = {
 
 			return true;
 		},
-		jwt: async ({ token, account, user, trigger }) => {
-			if (!token.email) {
-				return {};
-			}
-
-			if (user) {
-				// token.user = user;
-				token.sub = user.id;
-				token.email = user.email;
-				token.name = user.name;
-				token.picture = user.image;
-			}
-
-			// refresh the user's data if they update their name / email
-			if (trigger === 'update') {
-				const refreshedUser = await db.user.findUnique({
-					where: { id: token.sub },
-				});
-				if (refreshedUser) {
-					token.user = refreshedUser;
-				} else {
-					return {};
-				}
-			}
-			return token;
-		},
-		session: async ({ session, token }) => {
-			session.user = {
-				id: token.sub,
-				email: token.email,
-				name: token.name,
-				image: token.picture,
-				// @ts-ignore
-				...(token || session).user,
-			};
-
-			return session;
-		},
 	},
+
 	debug: process.env.NODE_ENV === 'development',
 };
