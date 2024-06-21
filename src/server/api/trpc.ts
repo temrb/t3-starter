@@ -121,6 +121,8 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 	});
 });
 
+export const errorCode = TRPCError;
+
 /**
  * Protected (authenticated) procedure
  *
