@@ -87,13 +87,7 @@ export const authOptions: NextAuthOptions = {
 				return false;
 			}
 
-			const providerProfileFields = {
-				google: 'picture',
-				linkedin: 'avatar_url', // Adjust if necessary for LinkedIn
-			};
-
-			const provider = account?.provider;
-			if (provider && ['google', 'linkedin'].includes(provider)) {
+			if (account?.provider === 'google') {
 				const userExists = await db.user.findUnique({
 					where: {
 						email: user.email,
@@ -104,27 +98,53 @@ export const authOptions: NextAuthOptions = {
 						image: true,
 					},
 				});
-
+				// if the user already exists via email,
+				// update the user with their name and image from Google
 				if (userExists && profile) {
-					const profilePic = profile[
-						providerProfileFields[provider]
-					] as string;
-					const dataToUpdate = {};
+					await db.user.update({
+						where: { email: user.email },
+						data: {
+							...(userExists.name ? {} : { name: profile.name }),
 
-					if (!userExists.name) {
-						dataToUpdate.name = profile.name || profile.login; // Using `login` as a fallback if `name` doesn't exist
-					}
-
-					if (!userExists.image) {
-						dataToUpdate.image = profilePic;
-					}
-
-					if (Object.keys(dataToUpdate).length > 0) {
-						await db.user.update({
-							where: { email: user.email },
-							data: dataToUpdate,
-						});
-					}
+							...(userExists.image
+								? {}
+								: {
+										// @ts-expect-error
+										// - this is a bug in the types, `picture` is a valid on the `Profile` type
+										image: profile.picture,
+									}),
+						},
+					});
+				}
+			}
+			if (account?.provider === 'linkedin') {
+				const userExists = await db.user.findUnique({
+					where: { email: user.email },
+					select: {
+						id: true,
+						name: true,
+						image: true,
+					},
+				});
+				// if the user already exists via email,
+				// update the user with their name and image from Github
+				if (userExists && profile) {
+					await db.user.update({
+						where: { email: user.email },
+						data: {
+							...(userExists.name
+								? {}
+								: // @ts-expect-error - this is a bug in the types, `login` is a valid on the `Profile` type
+									{ name: profile.name || profile.login }),
+							...(userExists.image
+								? {}
+								: {
+										// @ts-expect-error
+										// - this is a bug in the types, `picture` is a valid on the `Profile` type
+										image: profile.avatar_url,
+									}),
+						},
+					});
 				}
 			}
 
