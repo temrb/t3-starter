@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently --kill-others \"prisma generate && next dev --port 4242\" \"prisma generate && prisma studio --browser none\"",
+		"dev": "concurrently --kill-others \"prisma generate && next dev --port 4242\" \"prisma studio --browser none\"",
 		"build": "prisma generate && next build",
 		"analyze": "ANALYZE=true next build",
 		"start": "next start",
