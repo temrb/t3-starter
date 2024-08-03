@@ -1,40 +1,15 @@
-'use client';
-import React from 'react';
-import { signOut } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
-import { api } from '@/lib/api';
-import LoadingSpinner from '@/components/ui/loading/loading-spinner';
-
-const TRPCQuery = () => {
-	const trpcQuery = api.test.hello.useQuery();
-
-	if (trpcQuery.isLoading) {
-		return <LoadingSpinner size={14} />;
-	}
-
-	if (trpcQuery.error) {
-		return <div>error: {trpcQuery.error.message}</div>;
-	}
-
-	if (trpcQuery.isSuccess) {
-		return <div>{trpcQuery.data}</div>;
-	}
-};
+import Link from 'next/link';
 
 const Page = () => {
 	return (
-		<div className='flex items-center space-x-2'>
-			<Button
-				variant='destructive'
-				onClick={() => {
-					signOut();
-				}}
-			>
-				Sign out
-			</Button>
-			<div className='flex flex-col'>
-				<p>trpc query:</p>
-				<TRPCQuery />
+		<div className='flex h-full w-full items-center justify-center'>
+			<div className='flex flex-col space-y-4'>
+				<Link href='/get-started' className='underline'>
+					<p>Get Started</p>
+				</Link>
+				<h1>
+					Don't forget to run `npx prisma db push` to initialize db
+				</h1>
 			</div>
 		</div>
 	);

@@ -1,47 +1,21 @@
-import { getToken } from 'next-auth/jwt';
-import { NextRequest, NextResponse } from 'next/server';
+import { AppMiddleware } from '@/lib/middleware';
+import { NextFetchEvent, NextRequest } from 'next/server';
 
-const routeConfig = {
-	authorized: ['/', '/settings', '/profile/:path*'],
-	unauthorized: ['/get-started', '/hello'],
-	all: ['/terms/:path*', '/privacy/:path*', '/studio/:path*'],
+export const config = {
+	matcher: [
+		/*
+		 * Match all paths except for:
+		 * 1. /api/ routes
+		 * 2. /_next/ (Next.js internals)
+		 * 3. /_proxy/ (special page for OG tags proxying)
+		 * 4. /_static (inside /public)
+		 * 5. /_vercel (Vercel internals)
+		 * 6. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
+		 */
+		'/((?!api/|_next/|_proxy/|_static|_vercel|[\\w-]+\\.\\w+).*)',
+	],
 };
 
-export default async function middleware(req: NextRequest) {
-	const { pathname, origin } = req.nextUrl;
-
-	const matchPath = (path: string) => {
-		const regex = new RegExp('^' + path.replace(/:\w+\*/g, '.*') + '$');
-		return regex.test(pathname);
-	};
-
-	try {
-		if (routeConfig.all.some(matchPath)) {
-			return NextResponse.next();
-		} else if (routeConfig.authorized.some(matchPath)) {
-			const session = await getToken({
-				req,
-				secret: process.env.NEXTAUTH_SECRET,
-			});
-
-			if (!session) {
-				return NextResponse.redirect(new URL('/get-started', origin));
-			}
-		} else if (routeConfig.unauthorized.some(matchPath)) {
-			const session = await getToken({
-				req,
-				secret: process.env.NEXTAUTH_SECRET,
-			});
-
-			if (session) {
-				return NextResponse.redirect(new URL('/', origin));
-			}
-		}
-	} catch (error) {
-		console.error('Error processing middleware:', error);
-		// TODO error response.
-		return NextResponse.error();
-	}
-
-	return NextResponse.next();
+export default async function middleware(req: NextRequest, ev: NextFetchEvent) {
+	return AppMiddleware(req);
 }

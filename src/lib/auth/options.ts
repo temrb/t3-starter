@@ -2,7 +2,6 @@ import { db } from '@/server/prisma';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { DefaultSession, type NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import LinkedInProvider from 'next-auth/providers/linkedin';
 
 declare module 'next-auth' {
 	interface Session {
@@ -22,24 +21,6 @@ export const authOptions: NextAuthOptions = {
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-			allowDangerousEmailAccountLinking: true,
-			profile(profile) {
-				return {
-					id: profile.sub,
-					name: profile.name,
-					email: profile.email,
-					image: profile.picture,
-				};
-			},
-		}),
-		LinkedInProvider({
-			clientId: process.env.LINKEDIN_CLIENT_ID as string,
-			clientSecret: process.env.LINKEDIN_CLIENT_SECRET as string,
-			authorization: {
-				params: { scope: 'openid profile email' },
-			},
-			issuer: 'https://www.linkedin.com',
-			jwks_endpoint: 'https://www.linkedin.com/oauth/openid/jwks',
 			allowDangerousEmailAccountLinking: true,
 			profile(profile) {
 				return {
@@ -70,7 +51,7 @@ export const authOptions: NextAuthOptions = {
 		},
 	},
 	pages: {
-		// signIn: '/get-started',
+		signIn: '/get-started',
 		error: '/get-started',
 	},
 	callbacks: {
@@ -112,36 +93,6 @@ export const authOptions: NextAuthOptions = {
 										// @ts-expect-error
 										// - this is a bug in the types, `picture` is a valid on the `Profile` type
 										image: profile.picture,
-									}),
-						},
-					});
-				}
-			}
-			if (account?.provider === 'linkedin') {
-				const userExists = await db.user.findUnique({
-					where: { email: user.email },
-					select: {
-						id: true,
-						name: true,
-						image: true,
-					},
-				});
-				// if the user already exists via email,
-				// update the user with their name and image from Github
-				if (userExists && profile) {
-					await db.user.update({
-						where: { email: user.email },
-						data: {
-							...(userExists.name
-								? {}
-								: // @ts-expect-error - this is a bug in the types, `login` is a valid on the `Profile` type
-									{ name: profile.name || profile.login }),
-							...(userExists.image
-								? {}
-								: {
-										// @ts-expect-error
-										// - this is a bug in the types, `picture` is a valid on the `Profile` type
-										image: profile.avatar_url,
 									}),
 						},
 					});

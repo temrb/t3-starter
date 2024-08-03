@@ -1,8 +1,8 @@
-import React, { ReactNode } from 'react';
-import '../styles/globals.css';
-import Providers from './providers';
 import { Analytics } from '@/scripts';
 import localFont from 'next/font/local';
+import { ReactNode } from 'react';
+import '../styles/globals.css';
+import Providers from './providers';
 
 const hubot = localFont({
 	src: '../../public/assets/fonts/Hubot-Sans.woff2',
